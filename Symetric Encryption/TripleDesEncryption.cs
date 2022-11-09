@@ -20,7 +20,7 @@ namespace Symetric_Encryption
         /// <param name="IV"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public byte[] EncryptStringToBytes(string plainText, byte[] Key, byte[] IV)
+        public byte[] EncryptStringToBytes(string plainText, byte[] Key, byte[] IV, string cipherMode)
         {
             // Check arguments.
             if (plainText == null || plainText.Length <= 0)
@@ -29,6 +29,9 @@ namespace Symetric_Encryption
                 throw new ArgumentNullException("Key");
             if (IV == null || IV.Length <= 0)
                 throw new ArgumentNullException("IV");
+            if (cipherMode == null || cipherMode.Length <= 0)
+                throw new ArgumentNullException("cipherMode");
+
             byte[] encrypted;
             // Create an Rijndael object
             // with the specified key and IV.
@@ -36,7 +39,14 @@ namespace Symetric_Encryption
             {
                 mySymetricAlgorithm.Key = Key;
                 mySymetricAlgorithm.IV = IV;
-                mySymetricAlgorithm.Mode = CipherMode.CBC;
+                if (cipherMode == "CBC")
+                {
+                    mySymetricAlgorithm.Mode = CipherMode.CBC;
+                }
+                else if (cipherMode == "ECB")
+                {
+                    mySymetricAlgorithm.Mode = CipherMode.ECB;
+                }
                 mySymetricAlgorithm.Padding = PaddingMode.PKCS7;
 
                 // Create an encryptor to perform the stream transform.
@@ -70,7 +80,7 @@ namespace Symetric_Encryption
         /// <param name="IV"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public string DecryptStringFromBytes(byte[] cipherText, byte[] Key, byte[] IV)
+        public string DecryptStringFromBytes(byte[] cipherText, byte[] Key, byte[] IV, string cipherMode)
         {
             // Check arguments.
             if (cipherText == null || cipherText.Length <= 0)
@@ -79,6 +89,8 @@ namespace Symetric_Encryption
                 throw new ArgumentNullException("Key");
             if (IV == null || IV.Length <= 0)
                 throw new ArgumentNullException("IV");
+            if (cipherMode == null || cipherMode.Length <= 0)
+                throw new ArgumentNullException("cipherMode");
 
             // Declare the string used to hold
             // the decrypted text.
@@ -90,7 +102,14 @@ namespace Symetric_Encryption
             {
                 mySymetricAlgorithm.Key = Key;
                 mySymetricAlgorithm.IV = IV;
-                mySymetricAlgorithm.Mode = CipherMode.CBC;
+                if (cipherMode == "CBC")
+                {
+                    mySymetricAlgorithm.Mode = CipherMode.CBC;
+                }
+                else if (cipherMode == "ECB")
+                {
+                    mySymetricAlgorithm.Mode = CipherMode.ECB;
+                }
                 mySymetricAlgorithm.Padding = PaddingMode.PKCS7;
 
                 // Create a decryptor to perform the stream transform.
