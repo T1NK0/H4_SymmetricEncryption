@@ -9,6 +9,8 @@ namespace Symetric_Encryption
 {
     class TripleDesEncryption
     {
+        Logic logic = new Logic();
+
         /// <summary>
         /// Based on example from:
         /// https://learn.microsoft.com/en-us/dotnet/api/system.security.cryptography.cryptostream?view=net-6.0

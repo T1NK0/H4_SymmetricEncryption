@@ -1,4 +1,5 @@
 ﻿using Symetric_Encryption;
+using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -6,6 +7,8 @@ SymmetricAlgorithm mySymetricAlgorithm;
 AesEncryption aesEncryption = new AesEncryption();
 TripleDesEncryption tripleDesEncryption = new TripleDesEncryption();
 Logic logic = new Logic();
+Stopwatch timer = new Stopwatch();
+
 
 //string key = "vfNhx4fub1WeMnyaAmcvzw==";
 string key = "";
@@ -29,7 +32,7 @@ switch (cipher)
 {
     case "1":
         mySymetricAlgorithm = TripleDES.Create();
-        Console.WriteLine("\nAES chosen\n"+
+        Console.WriteLine("\nAES chosen\n" +
             "Write a text to encrypt:");
         message = Console.ReadLine();
 
@@ -41,7 +44,12 @@ switch (cipher)
         ivAsByteArray = logic.CreateKeyWithUserInput(16);
 
         //byte[] encrypted = aesEncryption.AesEncryptStringToBytes(message, userGeneratedKeyAsByteArray, userGenerateIvAsByteArray);
+
+        timer.Start();
         encrypted = aesEncryption.AesEncryptStringToBytes(message, keyAsByteArray, ivAsByteArray);
+        timer.Stop();
+
+        Console.WriteLine("Time used to encrypt: " + timer.ElapsedMilliseconds + "miliseconds");
 
         //string decrypted = aesEncryption.AesDecryptStringFromBytes(encrypted, userGeneratedKeyAsByteArray, userGenerateIvAsByteArray);
         decrypted = aesEncryption.AesDecryptStringFromBytes(encrypted, keyAsByteArray, ivAsByteArray);
@@ -64,7 +72,7 @@ switch (cipher)
         //byte[] userGenerateIvAsByteArray = logic.CreateKeyWithUserInput(readlineIVAsNumber);
         //Console.WriteLine(logic.MyStringBuilder(userGenerateIvAsByteArray));
 
-        Console.WriteLine("\nAES chosen\n" + 
+        Console.WriteLine("\nAES chosen\n" +
             "Write a text to encrypt:");
         message = Console.ReadLine();
 
@@ -76,12 +84,16 @@ switch (cipher)
         ivAsByteArray = logic.CreateKeyWithUserInput(16);
 
         //byte[] encrypted = aesEncryption.AesEncryptStringToBytes(message, userGeneratedKeyAsByteArray, userGenerateIvAsByteArray);
+        timer.Start();
         encrypted = aesEncryption.AesEncryptStringToBytes(message, keyAsByteArray, ivAsByteArray);
+        timer.Stop();
+
+        Console.WriteLine("Time used to encrypt: " + timer.ElapsedMilliseconds + "miliseconds");
 
         //string decrypted = aesEncryption.AesDecryptStringFromBytes(encrypted, userGeneratedKeyAsByteArray, userGenerateIvAsByteArray);
         decrypted = aesEncryption.AesDecryptStringFromBytes(encrypted, keyAsByteArray, ivAsByteArray);
 
-        Console.WriteLine("\n"+ "Encrypted:\n" + logic.MyStringBuilder(encrypted));
+        Console.WriteLine("\n" + "Encrypted:\n" + logic.MyStringBuilder(encrypted));
         Console.WriteLine("\n" + "Decrypted:\n" + decrypted);
         break;
     default:

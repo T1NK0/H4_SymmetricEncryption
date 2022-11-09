@@ -34,8 +34,6 @@ namespace Symetric_Encryption
             {
                 mySymetricAlgorithm.Key = Key;
                 mySymetricAlgorithm.IV = IV;
-                //mySymetricAlgorithm.KeySize = 128;
-                //mySymetricAlgorithm.BlockSize = 128;
                 mySymetricAlgorithm.Mode = CipherMode.CBC;
                 mySymetricAlgorithm.Padding = PaddingMode.PKCS7;
 
@@ -90,8 +88,6 @@ namespace Symetric_Encryption
             {
                 mySymetricAlgorithm.Key = Key;
                 mySymetricAlgorithm.IV = IV;
-                //mySymetricAlgorithm.KeySize = 128;
-                //mySymetricAlgorithm.BlockSize = 128;
                 mySymetricAlgorithm.Mode = CipherMode.CBC;
                 mySymetricAlgorithm.Padding = PaddingMode.PKCS7;
 
