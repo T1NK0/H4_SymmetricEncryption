@@ -14,6 +14,8 @@ string iv = "1rZP/rpVONgvZlleknD6zw==";
 SymmetricAlgorithm mySymetricAlgorithm = Aes.Create();
 mySymetricAlgorithm.IV = Convert.FromBase64String(iv);
 mySymetricAlgorithm.Key = Convert.FromBase64String(key);
+//mySymetricAlgorithm.EncryptCbcI();
+
 //mySymetricAlgorithm.KeySize = 256;
 
 string message = "Dette er en test! WOOHOO!";
@@ -21,11 +23,11 @@ byte[] messageAsByteArray = Encoding.UTF8.GetBytes(message);
 //byte[] keyAsByteArray = Encoding.UTF8.GetBytes(key);
 //byte[] ivAsByteArray = Encoding.UTF8.GetBytes(iv);
 
-string encryptedMessage = MyStringBuilder(Encrypt(messageAsByteArray, mySymetricAlgorithm));
-string decryptedMessage = MyStringBuilder(Decrypt(Convert.FromBase64String(encryptedMessage), mySymetricAlgorithm));
+byte[] encryptedMessage = Encrypt(messageAsByteArray, mySymetricAlgorithm);
+byte[] decryptedMessage = Decrypt(encryptedMessage, mySymetricAlgorithm);
 
-Console.WriteLine(encryptedMessage);
-Console.WriteLine(decryptedMessage);
+Console.WriteLine(MyStringBuilder(encryptedMessage));
+Console.WriteLine(MyStringBuilder(decryptedMessage));
 
 //adc61e90530277325540bc099088a48bfc7999fb122cf6953e17d4ed35cd3f14
 
@@ -49,12 +51,14 @@ Console.WriteLine(decryptedMessage);
 //    mySymetricAlgorithm.GenerateKey();
 //}
 
+//IV Skal være 16 bit
+
 //Mål krypteringshastighed på en tekst
-//128bit, 192bit, 256bit key size
+//128bit 192bit 256bit key size
 
 //ECB ELLER CBC
-//ElectronicCookBook = ECB
-//
+//ElectronicCookBook is ECB
+//CipherBlockChain is CBC
 
 
 //byte[] Encrypt(byte[] message, byte[] key, byte[] iv)
@@ -77,8 +81,10 @@ byte[] Encrypt(byte[] message, SymmetricAlgorithm mySymetricAlgorithm)
 byte[] Decrypt(byte[] message, SymmetricAlgorithm mySymetricAlgorithm)
 {
     byte[] plainText = new byte[message.Length];
+
     //mySymetricAlgorithm.Key = key;
     //mySymetricAlgorithm.IV = iv;
+
     using (MemoryStream ms = new MemoryStream())
     {
         using (CryptoStream cs = new CryptoStream(ms, mySymetricAlgorithm.CreateDecryptor(), CryptoStreamMode.Read))
@@ -93,22 +99,22 @@ byte[] Decrypt(byte[] message, SymmetricAlgorithm mySymetricAlgorithm)
 
 string CreateKey()
 {
-    //Generate a cryptographic random number.
+    //Generate a cryptographic random number
     RandomNumberGenerator rng = RandomNumberGenerator.Create();
     byte[] buff = new byte[16];
     rng.GetBytes(buff);
 
-    // Return a Base64 string representation of the random number.
+    // Return a Base64 string representation of the random number
     return Convert.ToBase64String(buff);
 }
 
 string MyStringBuilder(byte[] input)
 {
-    //Use a string builder to assemble the bytes to a string with text format, instead of hexadecimal.
+    //Use a string builder to assemble the bytes to a string with text format instead of hexadecimal
     StringBuilder sb = new StringBuilder();
     foreach (byte b in input)
     {
-        //ToString("x2") is to format hexadecimal to text.
+        //ToString("x2") is to format hexadecimal to text
         sb.Append(b.ToString("x2"));
     }
 
