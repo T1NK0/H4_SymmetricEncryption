@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Symetric_Encryption
 {
-    class AesEncryption
+    class TripleDesEncryption
     {
         /// <summary>
         /// Based on example from:
@@ -18,7 +18,7 @@ namespace Symetric_Encryption
         /// <param name="IV"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public byte[] AesEncryptStringToBytes(string plainText, byte[] Key, byte[] IV)
+        public byte[] EncryptStringToBytes(string plainText, byte[] Key, byte[] IV)
         {
             // Check arguments.
             if (plainText == null || plainText.Length <= 0)
@@ -30,14 +30,10 @@ namespace Symetric_Encryption
             byte[] encrypted;
             // Create an Rijndael object
             // with the specified key and IV.
-            using (SymmetricAlgorithm mySymetricAlgorithm = Aes.Create())
+            using (SymmetricAlgorithm mySymetricAlgorithm = TripleDES.Create())
             {
                 mySymetricAlgorithm.Key = Key;
                 mySymetricAlgorithm.IV = IV;
-                //mySymetricAlgorithm.KeySize = 128;
-                //mySymetricAlgorithm.BlockSize = 128;
-                mySymetricAlgorithm.Mode = CipherMode.CBC;
-                mySymetricAlgorithm.Padding = PaddingMode.PKCS7;
 
                 // Create an encryptor to perform the stream transform.
                 ICryptoTransform encryptor = mySymetricAlgorithm.CreateEncryptor(mySymetricAlgorithm.Key, mySymetricAlgorithm.IV);
@@ -70,7 +66,7 @@ namespace Symetric_Encryption
         /// <param name="IV"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public string AesDecryptStringFromBytes(byte[] cipherText, byte[] Key, byte[] IV)
+        public string DecryptStringFromBytes(byte[] cipherText, byte[] Key, byte[] IV)
         {
             // Check arguments.
             if (cipherText == null || cipherText.Length <= 0)
@@ -86,14 +82,10 @@ namespace Symetric_Encryption
 
             // Create an Rijndael object
             // with the specified key and IV.
-            using (SymmetricAlgorithm mySymetricAlgorithm = Aes.Create())
+            using (SymmetricAlgorithm mySymetricAlgorithm = TripleDES.Create())
             {
                 mySymetricAlgorithm.Key = Key;
                 mySymetricAlgorithm.IV = IV;
-                //mySymetricAlgorithm.KeySize = 128;
-                //mySymetricAlgorithm.BlockSize = 128;
-                mySymetricAlgorithm.Mode = CipherMode.CBC;
-                mySymetricAlgorithm.Padding = PaddingMode.PKCS7;
 
                 // Create a decryptor to perform the stream transform.
                 ICryptoTransform decryptor = mySymetricAlgorithm.CreateDecryptor(mySymetricAlgorithm.Key, mySymetricAlgorithm.IV);
