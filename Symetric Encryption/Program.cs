@@ -1,61 +1,62 @@
-﻿using System.Security.Cryptography;
+﻿using Symetric_Encryption;
+using System.Security.Cryptography;
 using System.Text;
 
-//Console.WriteLine("Choose a cipher, by pressing 1, 2 or 3\n" +
-//    "1. DES\n" +
-//    "2. TrippleDes\n" +
-//    "3. AES\n");
+Console.WriteLine("Choose a cipher, by pressing 1, 2 or 3\n" +
+    "1. TrippleDes\n" +
+    "2. AES\n");
 
-//string cipher = Console.ReadLine();
+string cipher = Console.ReadLine();
+
+SymmetricAlgorithm mySymetricAlgorithm;
+
+switch (cipher)
+{
+    case "1":
+        mySymetricAlgorithm = TripleDES.Create();
+        Console.WriteLine("TrippleDES encoding created");
+        break;
+    case "2":
+        mySymetricAlgorithm = Aes.Create();
+        Console.WriteLine("AES encoding created");
+        break;
+    default:
+        break;
+}
+
+Console.WriteLine("Encoding created");
+
+//CreateKey()
 
 string key = "vfNhx4fub1WeMnyaAmcvzw==";
 string iv = "1rZP/rpVONgvZlleknD6zw==";
-
-SymmetricAlgorithm mySymetricAlgorithm = Aes.Create();
-mySymetricAlgorithm.IV = Convert.FromBase64String(iv);
-mySymetricAlgorithm.Key = Convert.FromBase64String(key);
-//mySymetricAlgorithm.EncryptCbcI();
-
-//mySymetricAlgorithm.KeySize = 256;
+//SymmetricAlgorithm mySymetricAlgorithm = Aes.Create();
+//mySymetricAlgorithm.IV = Convert.FromBase64String(iv);
+//mySymetricAlgorithm.Key = Convert.FromBase64String(key);
+//mySymetricAlgorithm.KeySize = 128;
+//mySymetricAlgorithm.Mode = CipherMode.CBC;
+//mySymetricAlgorithm.Padding = PaddingMode.PKCS7;
 
 string message = "Dette er en test! WOOHOO!";
-byte[] messageAsByteArray = Encoding.UTF8.GetBytes(message);
-//byte[] keyAsByteArray = Encoding.UTF8.GetBytes(key);
-//byte[] ivAsByteArray = Encoding.UTF8.GetBytes(iv);
+//byte[] messageAsByteArray = Encoding.UTF8.GetBytes(message);
+byte[] keyAsByteArray = Convert.FromBase64String(key);
+byte[] ivAsByteArray = Convert.FromBase64String(iv);
 
-byte[] encryptedMessage = Encrypt(messageAsByteArray, mySymetricAlgorithm);
-byte[] decryptedMessage = Decrypt(encryptedMessage, mySymetricAlgorithm);
+AesEncryption aesEncryption = new AesEncryption();
 
-Console.WriteLine(MyStringBuilder(encryptedMessage));
-Console.WriteLine(MyStringBuilder(decryptedMessage));
+byte[] encrypted = aesEncryption.AesEncryptStringToBytes(message, keyAsByteArray, ivAsByteArray);
+string decrypted = aesEncryption.AesDecryptStringFromBytes(encrypted, keyAsByteArray, ivAsByteArray);
 
-//adc61e90530277325540bc099088a48bfc7999fb122cf6953e17d4ed35cd3f14
+Console.WriteLine(MyStringBuilder(encrypted));
+Console.WriteLine(decrypted);
 
-//Generate(cipher);
 
-//void Generate(string cipher)
-//{
-//    switch (cipher)
-//    {
-//        case "1":
-//            mySymetricAlgorithm = TripleDES.Create();
-//            break;
-//        case "2":
-//            mySymetricAlgorithm = Aes.Create();
-//            break;
-//        default:
-//            break;
-//    }
-
-//    mySymetricAlgorithm.GenerateIV();
-//    mySymetricAlgorithm.GenerateKey();
-//}
-
-//IV Skal være 16 bit
+//IV Skal være 16 eller 128 bit
 
 //Mål krypteringshastighed på en tekst
 //128bit 192bit 256bit key size
 
+//For TrippleDes
 //ECB ELLER CBC
 //ElectronicCookBook is ECB
 //CipherBlockChain is CBC
@@ -64,44 +65,62 @@ Console.WriteLine(MyStringBuilder(decryptedMessage));
 //byte[] Encrypt(byte[] message, byte[] key, byte[] iv)
 byte[] Encrypt(byte[] message, SymmetricAlgorithm mySymetricAlgorithm)
 {
-    //mySymetricAlgorithm.Key = key;
-    //mySymetricAlgorithm.IV = iv;
-    using (MemoryStream ms = new MemoryStream())
+    using (MemoryStream msEncrypt = new MemoryStream())
     {
-        using (CryptoStream cs = new CryptoStream(ms, mySymetricAlgorithm.CreateEncryptor(), CryptoStreamMode.Write))
+        using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, mySymetricAlgorithm.CreateEncryptor(), CryptoStreamMode.Write))
         {
-            cs.Write(message, 0, message.Length);
-            cs.Close();
+            using (StreamWriter swEncrypt = new StreamWriter(csEncrypt))
+            {
+                swEncrypt.Write(message);
+            }
 
-            return ms.ToArray();
+            return msEncrypt.ToArray();
         }
     }
 }
 
-byte[] Decrypt(byte[] message, SymmetricAlgorithm mySymetricAlgorithm)
+string Decrypt(byte[] message, SymmetricAlgorithm mySymetricAlgorithm)
 {
-    byte[] plainText = new byte[message.Length];
-
-    //mySymetricAlgorithm.Key = key;
-    //mySymetricAlgorithm.IV = iv;
-
-    using (MemoryStream ms = new MemoryStream())
+    using (MemoryStream msDecrypt = new MemoryStream())
     {
-        using (CryptoStream cs = new CryptoStream(ms, mySymetricAlgorithm.CreateDecryptor(), CryptoStreamMode.Read))
+        using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, mySymetricAlgorithm.CreateEncryptor(), CryptoStreamMode.Read))
         {
-            cs.Read(plainText, 0, message.Length);
-            cs.Close();
-
-            return plainText;
+            using (StreamReader swDecrypt = new StreamReader(csDecrypt))
+            {
+            return swDecrypt.ReadToEnd();
+            }
         }
     }
+
+    //byte[] plainText = new byte[message.Length];
+
+    //using (MemoryStream ms = new MemoryStream())
+    //{
+    //    using (CryptoStream cs = new CryptoStream(ms, mySymetricAlgorithm.CreateDecryptor(), CryptoStreamMode.Read))
+    //    {
+    //        cs.Read(plainText, 0, message.Length);
+    //        cs.FlushFinalBlock();
+
+    //        return plainText.ToArray();
+    //    }
+    //}
 }
 
-string CreateKey()
+byte[] CreateKeyWithUserInput(int length)
 {
     //Generate a cryptographic random number
     RandomNumberGenerator rng = RandomNumberGenerator.Create();
-    byte[] buff = new byte[16];
+    byte[] buff = new byte[length];
+    return buff;
+    //// Return a Base64 string representation of the random number
+    //return Convert.ToBase64String(buff);
+}
+
+string CreateKey(int length)
+{
+    //Generate a cryptographic random number
+    RandomNumberGenerator rng = RandomNumberGenerator.Create();
+    byte[] buff = new byte[length];
     rng.GetBytes(buff);
 
     // Return a Base64 string representation of the random number
