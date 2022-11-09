@@ -9,16 +9,8 @@ namespace Symetric_Encryption
 {
     class AesEncryption
     {
-        /// <summary>
-        /// Based on example from:
-        /// https://learn.microsoft.com/en-us/dotnet/api/system.security.cryptography.cryptostream?view=net-6.0
-        /// </summary>
-        /// <param name="plainText">Text to encrypt</param>
-        /// <param name="Key">Key word for encoding</param>
-        /// <param name="IV"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        public byte[] AesEncryptStringToBytes(string plainText, byte[] Key, byte[] IV)
+
+        public byte[] AesEncryptStringToBytes(string plainText, byte[] Key, byte[] IV, string cipherMode)
         {
             // Check arguments.
             if (plainText == null || plainText.Length <= 0)
@@ -26,15 +18,25 @@ namespace Symetric_Encryption
             if (Key == null || Key.Length <= 0)
                 throw new ArgumentNullException("Key");
             if (IV == null || IV.Length <= 0)
-                throw new ArgumentNullException("IV");
+                throw new ArgumentNullException("IV");            
+            if (cipherMode == null || cipherMode.Length <= 0)
+                throw new ArgumentNullException("cipherMode");
+
             byte[] encrypted;
-            // Create an Rijndael object
+            // Create an AES object
             // with the specified key and IV.
             using (SymmetricAlgorithm mySymetricAlgorithm = Aes.Create())
             {
                 mySymetricAlgorithm.Key = Key;
                 mySymetricAlgorithm.IV = IV;
-                mySymetricAlgorithm.Mode = CipherMode.CBC;
+                if (cipherMode == "CBC")
+                {
+                    mySymetricAlgorithm.Mode = CipherMode.CBC;
+                }
+                else if (cipherMode == "ECB")
+                {
+                    mySymetricAlgorithm.Mode = CipherMode.ECB;
+                }
                 mySymetricAlgorithm.Padding = PaddingMode.PKCS7;
 
                 // Create an encryptor to perform the stream transform.
@@ -59,16 +61,7 @@ namespace Symetric_Encryption
             return encrypted;
         }
 
-        /// <summary>
-        /// Based on example from:
-        /// https://learn.microsoft.com/en-us/dotnet/api/system.security.cryptography.cryptostream?view=net-6.0
-        /// </summary>
-        /// <param name="cipherText"></param>
-        /// <param name="Key"></param>
-        /// <param name="IV"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        public string AesDecryptStringFromBytes(byte[] cipherText, byte[] Key, byte[] IV)
+        public string AesDecryptStringFromBytes(byte[] cipherText, byte[] Key, byte[] IV, string cipherMode)
         {
             // Check arguments.
             if (cipherText == null || cipherText.Length <= 0)
@@ -77,18 +70,27 @@ namespace Symetric_Encryption
                 throw new ArgumentNullException("Key");
             if (IV == null || IV.Length <= 0)
                 throw new ArgumentNullException("IV");
+            if (cipherMode == null || cipherMode.Length <= 0)
+                throw new ArgumentNullException("cipherMode");
 
             // Declare the string used to hold
             // the decrypted text.
             string plaintext = null;
 
-            // Create an Rijndael object
+            // Create an AES object
             // with the specified key and IV.
             using (SymmetricAlgorithm mySymetricAlgorithm = Aes.Create())
             {
                 mySymetricAlgorithm.Key = Key;
                 mySymetricAlgorithm.IV = IV;
-                mySymetricAlgorithm.Mode = CipherMode.CBC;
+                if (cipherMode == "CBC")
+                {
+                    mySymetricAlgorithm.Mode = CipherMode.CBC;
+                }
+                else if (cipherMode == "ECB")
+                {
+                    mySymetricAlgorithm.Mode = CipherMode.ECB;
+                }
                 mySymetricAlgorithm.Padding = PaddingMode.PKCS7;
 
                 // Create a decryptor to perform the stream transform.

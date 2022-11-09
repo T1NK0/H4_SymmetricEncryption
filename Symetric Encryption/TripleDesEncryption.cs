@@ -36,6 +36,8 @@ namespace Symetric_Encryption
             {
                 mySymetricAlgorithm.Key = Key;
                 mySymetricAlgorithm.IV = IV;
+                mySymetricAlgorithm.Mode = CipherMode.CBC;
+                mySymetricAlgorithm.Padding = PaddingMode.PKCS7;
 
                 // Create an encryptor to perform the stream transform.
                 ICryptoTransform encryptor = mySymetricAlgorithm.CreateEncryptor(mySymetricAlgorithm.Key, mySymetricAlgorithm.IV);
@@ -88,6 +90,8 @@ namespace Symetric_Encryption
             {
                 mySymetricAlgorithm.Key = Key;
                 mySymetricAlgorithm.IV = IV;
+                mySymetricAlgorithm.Mode = CipherMode.CBC;
+                mySymetricAlgorithm.Padding = PaddingMode.PKCS7;
 
                 // Create a decryptor to perform the stream transform.
                 ICryptoTransform decryptor = mySymetricAlgorithm.CreateDecryptor(mySymetricAlgorithm.Key, mySymetricAlgorithm.IV);
